@@ -9,9 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.12.0/tsparticles.slim.bundle.min.js"></script>
     
     <script>
+        // JavaScript가 정상 실행될 때만 등장 애니메이션의 초기 투명 상태를 사용합니다.
+        document.documentElement.classList.add('js');
+
         tailwind.config = {
             theme: {
                 extend: {
@@ -25,13 +27,25 @@
     </script>
     <style>
         body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        .fade-in-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* 기본 상태에서는 본문이 보이고, JavaScript가 실행될 때만 등장 애니메이션을 적용합니다. */
+        .fade-in-up { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        html.js .fade-in-up { opacity: 0; transform: translateY(40px); }
+        html.js .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* 네트워크 캔버스는 콘텐츠 아래에서 그려지고 클릭을 방해하지 않습니다. */
+        #network-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-800 antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden relative">
 
-    <div id="tsparticles" class="fixed inset-0 z-0 pointer-events-none opacity-40"></div>
 
     <!-- 네비게이션: QUEST 활성화 -->
     <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm h-16 transition-colors">
@@ -48,7 +62,10 @@
         </div>
     </nav>
 
-    <main class="pt-16 min-h-[calc(100vh-64px)] relative flex items-center py-16 px-6 z-10">
+    <main class="pt-16 min-h-[calc(100vh-64px)] relative isolate overflow-hidden flex items-center py-16 px-6">
+
+        <!-- 배경 장식보다 위, 실제 퀘스트 카드보다 아래에 표시되는 네트워크 레이어 -->
+        <canvas id="network-canvas" aria-hidden="true"></canvas>
         
         <div class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070')] bg-cover bg-center opacity-20 mix-blend-luminosity pointer-events-none"></div>
         <div class="absolute inset-0 z-0 bg-gradient-to-t from-slate-950 via-slate-900/90 to-slate-900/60 pointer-events-none"></div>
@@ -103,9 +120,199 @@
     </footer>
 
     <script>
+        function initializePageContent() {
+            const fadeElements = document.querySelectorAll('.fade-in-up');
+
+            if (!('IntersectionObserver' in window)) {
+                fadeElements.forEach((element) => element.classList.add('visible'));
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries, currentObserver) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        currentObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            fadeElements.forEach((element) => observer.observe(element));
+
+            // 파티클 CDN 또는 observer 문제와 관계없이 본문이 반드시 보이도록 복구합니다.
+            window.setTimeout(() => {
+                fadeElements.forEach((element) => element.classList.add('visible'));
+            }, 700);
+        }
+
+        function initializeNetworkEffect() {
+            const canvas = document.getElementById('network-canvas');
+            const main = canvas?.closest('main');
+
+            if (!canvas || !main) {
+                return;
+            }
+
+            const context = canvas.getContext('2d');
+
+            if (!context) {
+                return;
+            }
+
+            const pointer = {
+                x: 0,
+                y: 0,
+                active: false
+            };
+
+            let particles = [];
+            let animationFrameId = 0;
+            let width = 0;
+            let height = 0;
+            let devicePixelRatio = 1;
+
+            function createParticle() {
+                return {
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    vx: (Math.random() - 0.5) * 0.65,
+                    vy: (Math.random() - 0.5) * 0.65,
+                    radius: Math.random() * 1.8 + 1.2
+                };
+            }
+
+            function resizeCanvas() {
+                const bounds = main.getBoundingClientRect();
+                width = Math.max(1, bounds.width);
+                height = Math.max(1, bounds.height);
+                devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+                canvas.width = Math.round(width * devicePixelRatio);
+                canvas.height = Math.round(height * devicePixelRatio);
+                canvas.style.width = `${width}px`;
+                canvas.style.height = `${height}px`;
+
+                context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+
+                const particleCount = Math.max(
+                    45,
+                    Math.min(95, Math.round((width * height) / 14000))
+                );
+
+                particles = Array.from({ length: particleCount }, createParticle);
+            }
+
+            function updatePointer(clientX, clientY) {
+                const bounds = main.getBoundingClientRect();
+                pointer.x = clientX - bounds.left;
+                pointer.y = clientY - bounds.top;
+                pointer.active =
+                    pointer.x >= 0 &&
+                    pointer.x <= bounds.width &&
+                    pointer.y >= 0 &&
+                    pointer.y <= bounds.height;
+            }
+
+            function drawLine(x1, y1, x2, y2, opacity, widthValue = 1) {
+                context.beginPath();
+                context.moveTo(x1, y1);
+                context.lineTo(x2, y2);
+                context.strokeStyle = `rgba(56, 189, 248, ${opacity})`;
+                context.lineWidth = widthValue;
+                context.stroke();
+            }
+
+            function animate() {
+                context.clearRect(0, 0, width, height);
+
+                particles.forEach((particle) => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+
+                    if (particle.x <= 0 || particle.x >= width) {
+                        particle.vx *= -1;
+                        particle.x = Math.max(0, Math.min(width, particle.x));
+                    }
+
+                    if (particle.y <= 0 || particle.y >= height) {
+                        particle.vy *= -1;
+                        particle.y = Math.max(0, Math.min(height, particle.y));
+                    }
+                });
+
+                for (let firstIndex = 0; firstIndex < particles.length; firstIndex += 1) {
+                    const first = particles[firstIndex];
+
+                    for (let secondIndex = firstIndex + 1; secondIndex < particles.length; secondIndex += 1) {
+                        const second = particles[secondIndex];
+                        const deltaX = first.x - second.x;
+                        const deltaY = first.y - second.y;
+                        const distance = Math.hypot(deltaX, deltaY);
+                        const maximumDistance = 145;
+
+                        if (distance < maximumDistance) {
+                            const opacity = (1 - distance / maximumDistance) * 0.34;
+                            drawLine(first.x, first.y, second.x, second.y, opacity, 1);
+                        }
+                    }
+
+                    if (pointer.active) {
+                        const pointerDistance = Math.hypot(first.x - pointer.x, first.y - pointer.y);
+                        const grabDistance = 260;
+
+                        if (pointerDistance < grabDistance) {
+                            const opacity = (1 - pointerDistance / grabDistance) * 0.95;
+                            drawLine(pointer.x, pointer.y, first.x, first.y, opacity, 1.4);
+                        }
+                    }
+                }
+
+                particles.forEach((particle) => {
+                    context.beginPath();
+                    context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+                    context.fillStyle = 'rgba(56, 189, 248, 0.82)';
+                    context.fill();
+                });
+
+                if (pointer.active) {
+                    context.beginPath();
+                    context.arc(pointer.x, pointer.y, 3, 0, Math.PI * 2);
+                    context.fillStyle = 'rgba(125, 211, 252, 0.95)';
+                    context.fill();
+                }
+
+                animationFrameId = window.requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('pointermove', (event) => {
+                updatePointer(event.clientX, event.clientY);
+            }, { passive: true });
+
+            main.addEventListener('pointerleave', () => {
+                pointer.active = false;
+            });
+
+            main.addEventListener('pointerenter', (event) => {
+                updatePointer(event.clientX, event.clientY);
+            });
+
+            window.addEventListener('resize', resizeCanvas, { passive: true });
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    window.cancelAnimationFrame(animationFrameId);
+                } else {
+                    animationFrameId = window.requestAnimationFrame(animate);
+                }
+            });
+
+            resizeCanvas();
+            animate();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            tsParticles.load("tsparticles", { particles: { number: { value: 60 }, color: { value: "#0ea5e9" }, shape: { type: "circle" }, opacity: { value: 0.6 }, size: { value: 3 }, links: { enable: true, distance: 150, color: "#38bdf8", opacity: 0.3, width: 1.5 }, move: { enable: true, speed: 1.2 } }, interactivity: { detectsOn: "window", events: { onHover: { enable: true, mode: "grab" } }, modes: { grab: { distance: 180, links: { opacity: 0.8, color: "#0284c7" } } } }, retina_detect: true });
-            const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 }); document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+            initializePageContent();
+            initializeNetworkEffect();
         });
 
         function showEmailInput() {

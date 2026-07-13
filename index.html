@@ -9,9 +9,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.12.0/tsparticles.slim.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
     
     <script>
+        // JavaScript가 실행되는 환경에서만 등장 애니메이션의 초기 투명 상태를 사용합니다.
+        document.documentElement.classList.add('js');
+
         tailwind.config = {
             theme: {
                 extend: {
@@ -38,18 +41,37 @@
     </script>
     <style>
         body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        .fade-in-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
-        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+        /* 기본 상태에서는 본문이 항상 보입니다. JS가 정상 실행될 때만 등장 애니메이션을 적용합니다. */
+        .fade-in-up { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        html.js .fade-in-up { opacity: 0; transform: translateY(40px); }
+        html.js .fade-in-up.visible { opacity: 1; transform: translateY(0); }
         .gradient-text { background: linear-gradient(135deg, #0ea5e9, #075985); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .progress-bar-fill { background: linear-gradient(90deg, #38bdf8, #0284c7); background-size: 200% 100%; animation: moveGradient 2s linear infinite; }
         @keyframes moveGradient { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
         #achievement-toast { position: fixed; top: 20px; right: -400px; z-index: 9999; transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         #achievement-toast.show { right: 20px; }
+
+        /* tsParticles 캔버스가 메인 영역을 정확히 채우도록 고정 */
+        #tsparticles {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: auto;
+        }
+
+        #tsparticles canvas {
+            position: absolute !important;
+            inset: 0;
+            width: 100% !important;
+            height: 100% !important;
+            pointer-events: auto !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden relative">
 
-    <div id="tsparticles" class="fixed inset-0 z-0 pointer-events-none opacity-60"></div>
 
     <div id="achievement-toast" class="bg-slate-900 text-white p-4 rounded-lg shadow-2xl flex items-center gap-4 border-l-4 border-gold-400">
         <div class="bg-gold-500/20 p-2 rounded-full">
@@ -76,7 +98,14 @@
         </div>
     </nav>
 
-    <main class="pt-16 min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-b from-brand-50 via-white to-slate-50 px-6 py-16 z-10">
+    <main class="pt-16 min-h-screen flex items-center justify-center relative isolate overflow-hidden bg-gradient-to-b from-brand-50 via-white to-slate-50 px-6 py-16">
+        <!-- 배경 장식보다 위, 실제 콘텐츠보다 아래에 표시되는 파티클 레이어 -->
+        <div
+            id="tsparticles"
+            class="absolute inset-0 z-[1] opacity-90"
+            aria-hidden="true"
+        ></div>
+
         <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
             <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-[0.03] mix-blend-multiply"></div>
             <div class="absolute bottom-0 left-0 w-full h-1/2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgNDBWMHptNDAgMEgweiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYmFlNmZkIiBzdHJva2Utb3BhY2l0eT0iMC41Ii8+PC9zdmc+')] [transform:perspective(500px)_rotateX(60deg)] origin-bottom opacity-50"></div>
@@ -186,24 +215,113 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 파티클 초기화
-            tsParticles.load("tsparticles", {
-                particles: { number: { value: 60 }, color: { value: "#0ea5e9" }, shape: { type: "circle" }, opacity: { value: 0.6 }, size: { value: 3, random: true }, links: { enable: true, distance: 150, color: "#38bdf8", opacity: 0.3, width: 1.5 }, move: { enable: true, speed: 1.2 } },
-                interactivity: { detectsOn: "window", events: { onHover: { enable: true, mode: "grab" } }, modes: { grab: { distance: 180, links: { opacity: 0.8, color: "#0284c7" } } } }, retina_detect: true
-            });
+        // 본문 표시 기능과 파티클 로딩을 서로 독립적으로 실행합니다.
+        function initializePageContent() {
+            const fadeElements = document.querySelectorAll('.fade-in-up');
 
-            // 페이드인 애니메이션
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+            // IntersectionObserver를 지원하지 않아도 본문이 투명하게 남지 않도록 처리합니다.
+            if (!('IntersectionObserver' in window)) {
+                fadeElements.forEach((element) => element.classList.add('visible'));
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries, currentObserver) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        currentObserver.unobserve(entry.target);
+                    }
+                });
             }, { threshold: 0.1 });
-            document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
 
-            // 업적 토스트
-            setTimeout(() => {
+            fadeElements.forEach((element) => observer.observe(element));
+
+            // 브라우저나 외부 라이브러리 문제로 observer가 동작하지 않아도 본문을 복구합니다.
+            window.setTimeout(() => {
+                fadeElements.forEach((element) => element.classList.add('visible'));
+            }, 700);
+        }
+
+        async function initializeParticles() {
+            const particleContainer = document.getElementById('tsparticles');
+
+            if (!particleContainer || typeof tsParticles === 'undefined') {
+                console.warn('tsParticles CDN을 불러오지 못했거나 파티클 컨테이너가 없습니다.');
+                return;
+            }
+
+            try {
+                await tsParticles.load('tsparticles', {
+                    fullScreen: { enable: false },
+                    detectRetina: true,
+
+                    particles: {
+                        number: {
+                            value: 70,
+                            density: { enable: true, area: 800 }
+                        },
+                        color: { value: '#0284c7' },
+                        shape: { type: 'circle' },
+                        opacity: { value: { min: 0.4, max: 0.8 } },
+                        size: { value: { min: 1, max: 4 } },
+                        links: {
+                            enable: true,
+                            distance: 150,
+                            color: '#0ea5e9',
+                            opacity: 0.45,
+                            width: 1.5
+                        },
+                        move: {
+                            enable: true,
+                            speed: 1.2,
+                            direction: 'none',
+                            random: true,
+                            straight: false,
+                            outModes: { default: 'bounce' }
+                        }
+                    },
+
+                    interactivity: {
+                        detectsOn: 'window',
+                        events: {
+                            onHover: { enable: true, mode: 'grab' },
+                            onClick: { enable: true, mode: 'push' },
+                            resize: true
+                        },
+                        modes: {
+                            grab: {
+                                distance: 260,
+                                links: { opacity: 1 }
+                            },
+                            push: {
+                                quantity: 4
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('파티클 초기화 중 오류가 발생했습니다.', error);
+            }
+        }
+
+        function initializeAchievementToast() {
+            window.setTimeout(() => {
                 const toast = document.getElementById('achievement-toast');
-                if(toast) { toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 5000); }
+
+                if (!toast) return;
+
+                toast.classList.add('show');
+                window.setTimeout(() => toast.classList.remove('show'), 5000);
             }, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 본문을 먼저 표시합니다. 파티클 로딩 완료를 기다리지 않습니다.
+            initializePageContent();
+            initializeAchievementToast();
+
+            // 외부 CDN 기반 파티클은 별도로 비동기 실행합니다.
+            void initializeParticles();
         });
     </script>
 </body>
