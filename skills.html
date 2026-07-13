@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이성진 | 스킬 및 미니게임 - Skills</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.12.0/tsparticles.slim.bundle.min.js"></script>
+    <script src="https://unpkg.com/kaboom@3000.1.17/dist/kaboom.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Inter"', '"Noto Sans KR"', 'sans-serif'], game: ['"Press Start 2P"', 'cursive', '"Noto Sans KR"'], },
+                    colors: { brand: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 800: '#075985', 900: '#0c4a6e', }, gold: { 400: '#fbbf24', 500: '#f59e0b', } }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .fade-in-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-200 { transition-delay: 200ms; } .delay-400 { transition-delay: 400ms; }
+        .game-panel { background: rgba(255, 255, 255, 0.95); border: 4px solid #bae6fd; border-radius: 16px; box-shadow: 8px 8px 0px #e0f2fe; transition: all 0.3s ease; }
+        .game-panel:hover { transform: translate(-4px, -4px); box-shadow: 12px 12px 0px #bae6fd; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; } .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; } .custom-scrollbar::-webkit-scrollbar-thumb { background: #bae6fd; border-radius: 4px; } .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+        #game-container canvas { outline: none; border-radius: 12px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden relative">
+
+    <div id="tsparticles" class="fixed inset-0 z-0 pointer-events-none opacity-60"></div>
+
+    <!-- 네비게이션: SKILLS 활성화 -->
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm h-16 transition-colors">
+        <div class="max-w-6xl mx-auto px-6 h-full flex items-center justify-between">
+            <a href="index.html" class="font-black text-brand-700 text-xl tracking-tighter flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                SJ.LEE
+            </a>
+            <div class="flex gap-6 md:gap-8 text-xs md:text-sm font-bold">
+                <a href="index.html" class="px-1 py-5 text-slate-500 hover:text-brand-600 border-b-2 border-transparent transition-colors">HOME</a>
+                <a href="skills.html" class="px-1 py-5 text-brand-600 border-b-2 border-brand-600 transition-colors">SKILLS</a>
+                <a href="quest.html" class="px-1 py-5 text-slate-500 hover:text-brand-600 border-b-2 border-transparent transition-colors">QUEST</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16 min-h-screen relative py-16 px-6 z-10">
+        <div class="absolute inset-0 z-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#0ea5e9 2px, transparent 2px); background-size: 30px 30px;"></div>
+
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="text-center mb-16 fade-in-up">
+                <h2 class="text-sm font-bold text-brand-600 tracking-widest uppercase mb-4">Special Skills</h2>
+                <h3 class="text-3xl md:text-5xl font-black text-slate-900 break-keep">팀을 하드캐리하는 <span class="text-brand-600">3가지 보유 스킬</span></h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                <div class="game-panel p-8 fade-in-up relative overflow-hidden group">
+                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-6 border-4 border-red-200 group-hover:scale-110 transition-transform">
+                        <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </div>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded mb-3 inline-block font-game">PASSIVE</span>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">지치지 않는 무한 체력</h4>
+                    <p class="text-slate-600 font-medium break-keep">밤샘 코딩, 마라톤 회의? 문제없습니다. 프로젝트 배포의 마지막 순간까지 팀의 텐션을 홀로 견인하는 강인한 체력을 보유했습니다.</p>
+                </div>
+                <div class="game-panel p-8 fade-in-up delay-200 relative overflow-hidden group">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-6 border-4 border-blue-200 group-hover:scale-110 transition-transform">
+                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    </div>
+                    <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded mb-3 inline-block font-game">ACTIVE</span>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">마르지 않는 AI 토큰</h4>
+                    <p class="text-slate-600 font-medium break-keep">최상위 유료 AI 모델 다수 구독 중. 막히는 구간을 치트키처럼 뚫어내며 팀의 개발 속도를 비약적으로 상승시킵니다.</p>
+                </div>
+                <div class="game-panel p-8 fade-in-up delay-400 relative overflow-hidden group">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 border-4 border-green-200 group-hover:scale-110 transition-transform">
+                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded mb-3 inline-block font-game">BUFF</span>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">압도적인 여유 시간</h4>
+                    <p class="text-slate-600 font-medium break-keep">모든 일상을 SSAFY와 개발 성장에 몰빵했습니다. 바쁜 팀원들 사이에서 빈자리를 메우고 일정을 수호하는 탱커입니다.</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 items-start fade-in-up mt-12 bg-white/60 p-6 rounded-2xl border border-slate-200">
+                <div class="w-full lg:w-2/3">
+                    <div class="mb-4 flex justify-between items-end">
+                        <div>
+                            <h2 class="text-2xl font-black text-slate-900 mb-1 flex items-center gap-2">
+                                <span class="text-3xl">🎮</span> 버그 피하기 미니게임
+                            </h2>
+                            <p class="text-slate-600 text-sm font-medium">화면 탭 또는 스페이스바를 눌러 버그(🐛)를 피하세요!</p>
+                        </div>
+                        <div class="text-brand-600 font-game text-xl bg-brand-50 px-3 py-1 rounded-lg border border-brand-200 shadow-sm">
+                            SCORE: <span id="current-score-display">0</span>
+                        </div>
+                    </div>
+                    
+                    <div id="game-container" class="cursor-pointer shadow-lg relative bg-brand-500 rounded-xl overflow-hidden w-full h-[400px]">
+                        <!-- Kaboom Canvas Injected Here -->
+                        <div id="game-over-overlay" class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center hidden">
+                            <h3 class="text-red-500 font-game text-3xl mb-4 drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">GAME OVER</h3>
+                            <p class="text-white text-lg mb-6">최종 스코어: <span id="final-score" class="font-bold text-gold-400 font-game">0</span></p>
+                            
+                            <div class="bg-white p-6 rounded-lg w-[90%] max-w-sm shadow-xl text-left border-t-4 border-brand-500">
+                                <p class="text-sm text-slate-800 mb-4 font-bold text-center border-b pb-2">명예의 전당에 기록을 남기시겠습니까?</p>
+                                <div class="mb-3">
+                                    <label for="guest-name" class="block text-xs font-bold text-brand-600 mb-1">👤 플레이어 닉네임</label>
+                                    <input type="text" id="guest-name" placeholder="예: 이재용" class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:border-brand-500 font-medium text-sm text-slate-800" maxlength="10">
+                                </div>
+                                <div class="mb-5">
+                                    <label for="guest-msg" class="block text-xs font-bold text-brand-600 mb-1">💬 한 줄 방명록 (선택)</label>
+                                    <input type="text" id="guest-msg" placeholder="예: 잘 놀다갑니다." class="w-full px-3 py-2 border border-slate-300 rounded focus:outline-none focus:border-brand-500 font-medium text-sm text-slate-800" maxlength="30">
+                                </div>
+                                <div class="flex gap-2">
+                                    <button id="submit-score-btn" class="flex-1 bg-brand-600 text-white py-2.5 rounded font-bold hover:bg-brand-700 transition shadow-md">기록 남기기</button>
+                                    <button id="restart-game-btn" class="flex-1 bg-slate-200 text-slate-700 py-2.5 rounded font-bold hover:bg-slate-300 transition shadow-sm">다시 하기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-1/3 game-panel h-[470px] flex flex-col bg-white">
+                    <div class="p-4 border-b-2 border-slate-100 bg-slate-50 rounded-t-xl flex items-center justify-between">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">리더보드</h3>
+                        <span class="text-[10px] bg-brand-100 text-brand-700 px-2 py-1 rounded font-bold">로컬 저장소</span>
+                    </div>
+                    <div id="guestbook-list" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                        <div class="text-center text-slate-400 text-sm py-10 font-medium">로딩 중...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 text-center fade-in-up">
+                <a href="quest.html" class="inline-flex items-center justify-center px-8 py-4 bg-slate-800 text-white rounded-full font-bold text-lg hover:bg-slate-700 hover:-translate-y-1 transition-all shadow-lg shadow-slate-300">
+                    최종 퀘스트 확인 ⬇️
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-950 text-slate-400 py-10 text-center px-6 border-t border-slate-800 relative z-20">
+        <p class="font-game text-[10px] mb-4 text-brand-600">GAME OVER? NO, CONTINUE!</p>
+        <p class="font-medium text-sm">© 2026 이성진 (Lee Sung-jin). All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            tsParticles.load("tsparticles", { particles: { number: { value: 60 }, color: { value: "#0ea5e9" }, shape: { type: "circle" }, opacity: { value: 0.6 }, size: { value: 3 }, links: { enable: true, distance: 150, color: "#38bdf8", opacity: 0.3, width: 1.5 }, move: { enable: true, speed: 1.2 } }, interactivity: { detectsOn: "window", events: { onHover: { enable: true, mode: "grab" } }, modes: { grab: { distance: 180, links: { opacity: 0.8, color: "#0284c7" } } } }, retina_detect: true });
+            const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 }); document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+        });
+
+        const DB_KEY = 'sj_minigame_scores';
+        
+        function loadGuestbook() {
+            const listEl = document.getElementById('guestbook-list');
+            let records = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+            records.sort((a, b) => { if(b.score !== a.score) return b.score - a.score; return b.date - a.date; });
+            
+            listEl.innerHTML = '';
+            if (records.length === 0) { listEl.innerHTML = '<div class="text-center text-slate-400 text-sm py-10 font-medium">첫 번째 기록을 남겨보세요!</div>'; return; }
+
+            records.slice(0, 30).forEach((record, index) => {
+                const isTop3 = index < 3;
+                let rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 text-slate-600 text-[10px] font-bold mr-2 ml-1">${index+1}</span>`;
+                if(isTop3) rankIcon = `<span class="text-lg w-7 text-center inline-block">${rankIcon}</span>`;
+
+                const el = document.createElement('div');
+                el.className = `bg-white p-3 rounded border ${isTop3 ? 'border-brand-200 bg-brand-50/40 shadow-sm' : 'border-slate-100'} flex justify-between items-center transition-transform hover:-translate-y-0.5`;
+                const safeName = (record.name || '').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const safeMsg = (record.msg || '').replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+                el.innerHTML = `<div class="flex items-center gap-1 flex-1 truncate pr-2">${rankIcon}<div class="flex flex-col truncate"><span class="font-bold text-slate-800 text-sm truncate">${safeName}</span>${safeMsg ? `<span class="text-[10px] text-slate-500 truncate mt-0.5">${safeMsg}</span>` : ''}</div></div><span class="font-game text-brand-600 text-[10px] shrink-0">${record.score} PT</span>`;
+                listEl.appendChild(el);
+            });
+        }
+
+        window.saveGameScore = function(name, score, msg) {
+            let records = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+            records.push({ name: name.trim() || '이재용', score: Number(score), msg: msg.trim() || '잘 놀다갑니다.', date: Date.now() });
+            localStorage.setItem(DB_KEY, JSON.stringify(records));
+            loadGuestbook();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGuestbook();
+            
+            kaboom({ root: document.getElementById("game-container"), background: [14, 165, 233], width: 600, height: 400, scale: 1 });
+            const scoreDisplay = document.getElementById('current-score-display');
+            const gameOverOverlay = document.getElementById('game-over-overlay');
+            const finalScoreEl = document.getElementById('final-score');
+            let score = 0;
+
+            scene("start", () => {
+                scoreDisplay.innerText = 0;
+                add([ text("TAP OR SPACE TO START!", { size: 28, font: "sans-serif" }), pos(width() / 2, height() / 2 - 20), anchor("center"), color(255, 255, 255) ]);
+                add([ text("버그(🐛)를 피하세요!", { size: 16, font: "sans-serif" }), pos(width() / 2, height() / 2 + 30), anchor("center"), color(224, 242, 254) ]);
+                onKeyPress("space", () => go("game")); onClick(() => go("game"));
+            });
+
+            scene("game", () => {
+                score = 0; scoreDisplay.innerText = score; setGravity(2400);
+                const player = add([ text("😎", { size: 48 }), pos(80, height() - 100), area({ shape: new Rect(vec2(0,0), 38, 38) }), body(), "player" ]);
+                add([ rect(width(), 48), pos(0, height() - 48), outline(4), area(), body({ isStatic: true }), color(2, 132, 199) ]);
+
+                function jump() { if (player.isGrounded()) player.jump(800); }
+                onKeyPress("space", jump); onClick(jump);
+
+                function spawnBug() {
+                    const bugSpeed = 350 + (score * 2.5);
+                    add([ text("🐛", { size: 40 }), area({ shape: new Rect(vec2(0,0), 30, 30) }), pos(width() + 50, height() - 48), anchor("botleft"), move(LEFT, bugSpeed), "bug" ]);
+                    wait(Math.max(0.7, rand(1.2, 2.5) - (score * 0.015)), spawnBug);
+                }
+                wait(1, spawnBug);
+
+                loop(0.5, () => { score += 10; scoreDisplay.innerText = score; });
+                player.onCollide("bug", () => { go("lose", score); });
+                player.onUpdate(() => { if (player.pos.y > height() + 50) go("lose", score); });
+            });
+
+            scene("lose", (finalScore) => {
+                add([ text("😵", { size: 64 }), pos(width() / 2, height() / 2 - 50), anchor("center") ]);
+                finalScoreEl.innerText = finalScore; gameOverOverlay.classList.remove('hidden');
+            });
+
+            document.getElementById('restart-game-btn').addEventListener('click', () => { gameOverOverlay.classList.add('hidden'); go("start"); });
+            document.getElementById('submit-score-btn').addEventListener('click', () => {
+                window.saveGameScore(document.getElementById('guest-name').value, score, document.getElementById('guest-msg').value);
+                document.getElementById('guest-name').value = ''; document.getElementById('guest-msg').value = '';
+                gameOverOverlay.classList.add('hidden'); go("start");
+            });
+
+            go("start");
+        });
+    </script>
+</body>
+</html>

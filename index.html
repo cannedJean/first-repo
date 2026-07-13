@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이성진 | 최종 퀘스트 - Quest</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-slim@2.12.0/tsparticles.slim.bundle.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Inter"', '"Noto Sans KR"', 'sans-serif'], game: ['"Press Start 2P"', 'cursive', '"Noto Sans KR"'], },
+                    colors: { brand: { 50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 800: '#075985', 900: '#0c4a6e', }, gold: { 400: '#fbbf24', 500: '#f59e0b', } },
+                    animation: { 'slide-in': 'slideIn 0.5s ease-out forwards', 'level-up': 'levelUp 0.5s ease-out forwards', },
+                    keyframes: { slideIn: { '0%': { transform: 'translateX(100%)', opacity: '0' }, '100%': { transform: 'translateX(0)', opacity: '1' }, }, levelUp: { '0%': { transform: 'scale(0.8)', opacity: '0' }, '50%': { transform: 'scale(1.2)', opacity: '1' }, '100%': { transform: 'scale(1)', opacity: '1' }, } }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .fade-in-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-800 antialiased selection:bg-brand-500 selection:text-white overflow-x-hidden relative">
+
+    <div id="tsparticles" class="fixed inset-0 z-0 pointer-events-none opacity-40"></div>
+
+    <!-- 네비게이션: QUEST 활성화 -->
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm h-16 transition-colors">
+        <div class="max-w-6xl mx-auto px-6 h-full flex items-center justify-between">
+            <a href="index.html" class="font-black text-brand-700 text-xl tracking-tighter flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                SJ.LEE
+            </a>
+            <div class="flex gap-6 md:gap-8 text-xs md:text-sm font-bold">
+                <a href="index.html" class="px-1 py-5 text-slate-500 hover:text-brand-600 border-b-2 border-transparent transition-colors">HOME</a>
+                <a href="skills.html" class="px-1 py-5 text-slate-500 hover:text-brand-600 border-b-2 border-transparent transition-colors">SKILLS</a>
+                <a href="quest.html" class="px-1 py-5 text-brand-600 border-b-2 border-brand-600 transition-colors">QUEST</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16 min-h-[calc(100vh-64px)] relative flex items-center py-16 px-6 z-10">
+        
+        <div class="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070')] bg-cover bg-center opacity-20 mix-blend-luminosity pointer-events-none"></div>
+        <div class="absolute inset-0 z-0 bg-gradient-to-t from-slate-950 via-slate-900/90 to-slate-900/60 pointer-events-none"></div>
+
+        <div class="relative z-10 w-full max-w-3xl mx-auto rounded-2xl bg-slate-900/70 backdrop-blur-md border border-brand-500/30 p-8 md:p-12 text-slate-200 fade-in-up shadow-[0_0_50px_rgba(14,165,233,0.15)] ring-1 ring-white/10">
+            <div class="text-center mb-8">
+                <span class="bg-brand-900/50 text-brand-300 border border-brand-500/30 font-game text-[10px] px-3 py-1.5 rounded inline-block mb-4 shadow-[0_0_10px_rgba(14,165,233,0.2)]">FINAL QUEST</span>
+                <h2 class="text-2xl md:text-4xl font-black leading-tight text-white drop-shadow-md break-keep">
+                    논란의 예비 회장님 영입하기
+                </h2>
+                <p class="mt-4 text-slate-300 font-medium">당신의 팀 슬롯에 강력한 하드캐리어 '이성진'을 추가하시겠습니까?</p>
+            </div>
+            
+            <div class="bg-slate-800/60 rounded-lg p-6 mb-8 border border-slate-600/50 shadow-inner">
+                <h3 class="font-bold text-lg mb-4 flex items-center gap-2 text-white">
+                    <svg class="w-5 h-5 text-brand-400" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path></svg>
+                    퀘스트 수락 시 확정 보상
+                </h3>
+                <ul class="space-y-3 font-medium text-slate-300 text-sm md:text-base">
+                    <li class="flex items-start gap-2"><span class="text-brand-400 mt-0.5">✔️</span><span><strong class="text-white">SSAFY 최우수 프로젝트</strong> 달성 확률 대폭 상승</span></li>
+                    <li class="flex items-start gap-2"><span class="text-brand-400 mt-0.5">✔️</span><span>무임승차 걱정 없는 <strong class="text-white">팀원 전원 편안한 숙면</strong> 보장</span></li>
+                    <li class="flex items-start gap-2"><span class="text-brand-400 mt-0.5">✔️</span><span>고품질 AI 활용 코드를 통한 <strong class="text-white">팀의 기술적 성장</strong> 쉐어</span></li>
+                </ul>
+            </div>
+            
+            <div id="quest-action-area" class="flex flex-col items-center gap-4">
+                <button onclick="showEmailInput()" class="w-full sm:w-auto px-16 py-4 bg-brand-600 text-white rounded-full font-bold text-lg hover:bg-brand-500 hover:-translate-y-1 transition-all duration-300 shadow-[0_0_20px_rgba(14,165,233,0.4)]">
+                    ACCEPT (수락)
+                </button>
+                <button onclick="handleDeclineQuest()" class="text-xs text-slate-500 hover:text-slate-300 underline underline-offset-4 transition-colors bg-transparent border-none">
+                    다음에 함께하기
+                </button>
+            </div>
+
+            <div id="quest-email-area" class="hidden flex-col items-center gap-4 w-full max-w-md mx-auto animate-slide-in">
+                <p class="text-sm text-brand-300 font-bold">🚀 퀘스트 수락 완료! 파티 초대장을 보낼 이메일을 입력해주세요.</p>
+                <div class="flex flex-col sm:flex-row w-full gap-2">
+                    <input type="email" id="party-email" placeholder="예: ceo@samsung.com" class="flex-1 px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 placeholder-slate-500 text-sm">
+                    <button onclick="sendInvitation()" class="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-500 text-white rounded-lg font-bold hover:shadow-[0_0_15px_rgba(14,165,233,0.5)] transition-all shrink-0">
+                        초대장 발송
+                    </button>
+                </div>
+            </div>
+            
+            <div id="quest-success" class="mt-6 text-center font-bold text-base hidden min-h-[24px]"></div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-950 text-slate-400 py-10 text-center px-6 border-t border-slate-800 relative z-20">
+        <p class="font-game text-[10px] mb-4 text-brand-600">GAME OVER? NO, CONTINUE!</p>
+        <p class="font-medium text-sm">© 2026 이성진 (Lee Sung-jin). All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            tsParticles.load("tsparticles", { particles: { number: { value: 60 }, color: { value: "#0ea5e9" }, shape: { type: "circle" }, opacity: { value: 0.6 }, size: { value: 3 }, links: { enable: true, distance: 150, color: "#38bdf8", opacity: 0.3, width: 1.5 }, move: { enable: true, speed: 1.2 } }, interactivity: { detectsOn: "window", events: { onHover: { enable: true, mode: "grab" } }, modes: { grab: { distance: 180, links: { opacity: 0.8, color: "#0284c7" } } } }, retina_detect: true });
+            const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 }); document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+        });
+
+        function showEmailInput() {
+            document.getElementById('quest-action-area').classList.add('hidden');
+            document.getElementById('quest-email-area').classList.remove('hidden');
+            document.getElementById('quest-email-area').classList.add('flex');
+            document.getElementById('quest-success').classList.add('hidden');
+        }
+
+        function sendInvitation() {
+            const email = document.getElementById('party-email').value;
+            const msg = document.getElementById('quest-success');
+            
+            if(!email || !email.includes('@')) {
+                msg.innerHTML = '<span class="text-red-400">올바른 이메일 주소를 입력해주세요. 😅</span>';
+                msg.classList.remove('hidden'); msg.classList.add('block'); return;
+            }
+
+            document.getElementById('quest-email-area').classList.add('hidden');
+            document.getElementById('quest-email-area').classList.remove('flex');
+            msg.innerHTML = `<span class="text-brand-400 animate-level-up inline-block text-lg mt-4">🎉 [${email}]로 파티 초대 알림을 발송했습니다!<br/><span class="text-sm text-slate-300 font-normal mt-2 inline-block">역대급 프로젝트를 곧 시작합니다. 🚀</span></span>`;
+            msg.classList.remove('hidden'); msg.classList.add('block');
+        }
+
+        function handleDeclineQuest() {
+            const msg = document.getElementById('quest-success');
+            document.getElementById('quest-action-area').classList.remove('hidden');
+            document.getElementById('quest-email-area').classList.add('hidden');
+            document.getElementById('quest-email-area').classList.remove('flex');
+            
+            msg.innerHTML = '<span class="text-slate-500 block mt-4">아쉽네요! 언젠가 더 좋은 기회로 뵙겠습니다. 👋</span>';
+            msg.classList.remove('hidden'); msg.classList.add('block');
+        }
+    </script>
+</body>
+</html>
